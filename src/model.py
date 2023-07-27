@@ -10,7 +10,7 @@ from torch import nn
 from torchvision import transforms 
 from torch.utils.data import DataLoader
 import numpy as np
-
+from foward_diffusion import forward_diffusion_sample
 
 
 class Block(nn.Module):
@@ -111,3 +111,12 @@ class SimpleUnet(nn.Module):
             x = torch.cat((x, residual_x), dim=1)           
             x = up(x, t)
         return self.output(x)
+
+
+
+def get_loss(model, x_0, t, device='cpu'):
+    x_noisy, noise = forward_diffusion_sample(x_0, t, device)
+    noise_pred = model(x_noisy, t)
+    return F.l1_loss(noise, noise_pred)
+
+  

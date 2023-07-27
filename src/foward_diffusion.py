@@ -28,7 +28,29 @@ def cosine_beta_schedule(timesteps, s=0.008):
 
 # Define a função que vai retornar índice t específico de uma lista passada de 
 # valores "vals" enquanto considera a dimensão do batch (lote)
+def forward_data():
+    T = 400
+    betas = cosine_beta_schedule(timesteps=T)
 
+    # Pré calcular os diferentes termos para a forma fechada da difusão
+    alphas = 1. - betas
+    alphas_cumprod = torch.cumprod(alphas, axis=0)
+    alphas_cumprod_prev = F.pad(alphas_cumprod[:-1], (1, 0), value=1.0)
+    sqrt_recip_alphas = torch.sqrt(1.0 / alphas)
+    sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
+    sqrt_one_minus_alphas_cumprod = torch.sqrt(1. - alphas_cumprod)
+    posterior_variance = betas * (1. - alphas_cumprod_prev) / (1. - alphas_cumprod)
+    return {
+        "T": T,
+        "betas": betas,
+        "alphas": alphas,
+        "alphas_cumprod": alphas_cumprod,
+        "alphas_cumprod_prev": alphas_cumprod_prev,
+        "sqrt_recip_alphas": sqrt_recip_alphas,
+        "sqrt_alphas_cumprod": sqrt_alphas_cumprod,
+        "sqrt_one_minus_alphas_cumprod": sqrt_one_minus_alphas_cumprod,
+        "posterior_variance": posterior_variance
+    }
 T = 400
 betas = cosine_beta_schedule(timesteps=T)
 
