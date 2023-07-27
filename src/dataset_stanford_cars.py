@@ -5,6 +5,8 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
+
+
 def load_data_cars():
     return torchvision.datasets.StanfordCars(root='../data', download=False)
 
